@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin</title>
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+        crossorigin="anonymous"
+    />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+<style>
+    body {
+        display: flex;
+        flex-direction: column; /* Mengatur elemen dalam kolom vertikal */
+        min-height: 100vh; /* Tinggi minimum halaman adalah 100% viewport */
+        margin: 0;
+    }
+
+    main {
+        flex: 1; /* Elemen utama mengambil sisa ruang antara navbar dan footer */
+    }
+
+    footer {
+        background-color: #333; /* Warna latar footer */
+        padding: 5px; /* Padding atas dan bawah */
+        color: whitesmoke; /* Warna teks footer */
+        margin-top: auto; /* Memastikan footer berada di bawah */
+    }
+</style>
+
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-primary navbar-light">
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <a class="nav-link" href="/indexAdmin" style="color: white;">
+                    <i class="fas fa-users"></i> Data Customer
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/jenisKamar" style="color: white;">
+                    <i class="fas fa-bed"></i> Tambah Jenis Kamar
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/dataKamar" style="color: white;">
+                    <i class="fas fa-list-alt"></i> Daftar Kamar
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logoutAdmin" style="color: white;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Welcome Section -->
+    <div class="card shadow-lg mb-4 mt-5 mx-auto" style="width: 1300px;">
+        <div class="card-header bg-primary text-white text-center">
+            <h4>Selamat Datang Di Admin Page</h4>
+        </div>
+        <div class="card-body text-center">
+            <p id="username-display" class="fw-bold"></p>
+            <h4 style="color: green;">Welcome, <%= username %>!</h4>
+        </div>
+    </div>
+
+    <!-- Data Cards Section -->
+    <div class="container mt-4">
+        <div class="row g-4">
+            <% customer.forEach((indexAdmin) => { %>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h5>ID Booking: <%= indexAdmin.id %></h5>
+                    </div>                    
+                    <div class="card-body d-flex flex-column" style="background-color: whitesmoke;">
+                        <div class="row">
+                            <div class="col-6">
+                                <strong><i class="fas fa-user"></i> Nama Tamu</strong>
+                                <p><%= indexAdmin.nama %></p>
+                            </div>
+                            <div class="col-6">
+                                <strong><i class="fas fa-envelope"></i> Email</strong>
+                                <p><%= indexAdmin.email %></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <strong><i class="fas fa-phone"></i> No. Telepon</strong>
+                                <p><%= indexAdmin.phone_number %></p>
+                            </div>
+                            <div class="col-6">
+                                <strong><i class="fas fa-bed"></i> Kamar</strong>
+                                <p><%= indexAdmin.jenis_room %></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <strong><i class="fas fa-calendar-alt"></i> Check-in</strong>
+                                <p class="date-cell"><%= indexAdmin.check_in_date %></p>
+                            </div>
+                            <div class="col-6">
+                                <strong><i class="fas fa-calendar-check"></i> Check-out</strong>
+                                <p class="date-cell"><%= indexAdmin.check_out_date %></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <strong><i class="fas fa-dollar-sign"></i> Harga</strong>
+                                <p><%= indexAdmin.harga %></p>
+                            </div>
+                            <div class="col-6">
+                                <strong><i class="fas fa-user-tag"></i> Username</strong>
+                                <p><%= indexAdmin.username %></p>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <strong>Status </strong>
+                                    <p style="color: green;" class="status-cell">
+                                        <% if (indexAdmin.status === 'Confirmed') { %>
+                                            <i class="fas fa-check-circle" style="color: green;"></i> <%= indexAdmin.status %>
+                                        <% } else { %>
+                                            <i class="fas fa-clock" style="color: orange;"></i> <%= indexAdmin.status || 'Pending' %>
+                                        <% } %>
+                                    </p>
+                                </div>                            
+                            </div>                                                       
+                        </div>
+                        <div class="mt-auto d-flex justify-content-between">
+                            <button class="btn btn-sm btn-success confirmBtn" data-id="<%= indexAdmin.id %>">
+                                <i class="fas fa-check-circle"></i> Proses
+                            </button>
+                            <button class="btn btn-sm btn-danger deleteBtn" data-id="<%= indexAdmin.id %>">
+                                <i class="fas fa-times-circle"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+        <% if (customer.length === 0) { %>
+        <div class="alert alert-warning text-center mt-4" role="alert">Belum ada Data Pesanan</div>
+        <% } %>
+    </div>
+
+    <!-- Modal Konfirmasi Hapus -->
+    <div id="confirmDeleteModal" class="modal fade" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Konfirmasi Penghapusan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Apakah Anda yakin ingin menghapus pesanan ini?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tidak</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Hapus Pesanan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Notifikasi Konfirmasi Berhasil -->
+    <div id="confirmSuccessModal" class="modal fade" tabindex="-1" aria-labelledby="confirmSuccessModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmSuccessModalLabel">Konfirmasi Berhasil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Pesanan telah berhasil dikonfirmasi!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <p>&copy; 2025 Abdur Hotels. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.querySelectorAll(".confirmBtn").forEach((btn) => {
+            btn.addEventListener("click", function () {
+                const customerId = this.getAttribute("data-id");
+
+                fetch(`/indexAdmin/${customerId}/confirm`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                .then((response) => {
+                    if (response.ok) {
+                        // Ubah status di UI menjadi Confirmed langsung setelah berhasil
+                        const statusCell = this.closest(".card").querySelector(".status-cell");
+                        if (statusCell) {
+                            statusCell.textContent = "Confirmed";  // Menampilkan "Confirmed" di UI
+                        }
+                    
+                        // Tampilkan modal konfirmasi berhasil
+                        const successModal = new bootstrap.Modal(document.getElementById('confirmSuccessModal'));
+                        successModal.show();
+                    } else {
+                        return response.text().then((text) => {
+                            throw new Error(text);
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error confirming customer:", error);
+                    alert("Terjadi kesalahan saat mengonfirmasi pesanan.");
+                });
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Format tanggal di dalam tabel
+            document.querySelectorAll(".date-cell").forEach((cell) => {
+                const originalDate = cell.textContent.trim();
+                if (originalDate) {
+                    const formattedDate = formatDate(originalDate);
+                    cell.textContent = formattedDate;
+                }
+            });
+
+            let selectedCustomerId = null;
+
+            // Ketika tombol Cancel ditekan
+            document.querySelectorAll(".deleteBtn").forEach((btn) => {
+                btn.addEventListener("click", function () {
+                    selectedCustomerId = this.getAttribute("data-id");
+                    const modal = new bootstrap.Modal(document.getElementById("confirmDeleteModal"));
+                    modal.show();
+                });
+            });
+
+            // Konfirmasi Hapus di Modal
+            document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
+                if (selectedCustomerId) {
+                    fetch(`/indexAdmin/${selectedCustomerId}`, {
+                        method: "DELETE",
+                    })
+                        .then((response) => {
+                            if (response.ok) {
+                                const modal = bootstrap.Modal.getInstance(document.getElementById("confirmDeleteModal"));
+                                modal.hide();
+                                location.reload();
+                            } else {
+                                return response.text().then((text) => {
+                                    throw new Error(text);
+                                });
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Error deleting customer:", error);
+                            alert("Terjadi kesalahan saat menghapus data.");
+                        });
+                }
+            });
+        });
+
+        function formatDate(date) {
+            const months = [
+                "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+            ];
+            const d = new Date(date);
+            const day = d.getDate().toString().padStart(2, "0");
+            const month = months[d.getMonth()];
+            const year = d.getFullYear();
+            return `${day} ${month} ${year}`;
+        }
+    </script>
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"
+    ></script>
+</body>
+</html>

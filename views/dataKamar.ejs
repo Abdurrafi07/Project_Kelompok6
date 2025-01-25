@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Kamar</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+</head>
+
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        margin: 0;
+    }
+
+    main {
+        flex: 1;
+    }
+
+    footer {
+        background-color: #333;
+        padding: 5px;
+        color: whitesmoke;
+        margin-top: auto;
+    }
+
+    .card {
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .card-header {
+        text-align: center;
+        background-color: #007bff;
+        color: white;
+    }
+
+    .card-body {
+        background-color: whitesmoke;
+        color: #212529;
+    }
+
+    .btn-success,
+    .btn-danger {
+        margin: 5px;
+    }
+
+    .alert {
+        margin-top: 20px;
+    }
+
+    .nav-link {
+        color: white !important;
+    }
+</style>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-primary navbar-light">
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <a class="nav-link" href="/indexAdmin">
+                    <i class="fas fa-users"></i> Data Customer
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/jenisKamar">
+                    <i class="fas fa-bed"></i> Tambah Jenis Kamar
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="/dataKamar">
+                    <i class="fas fa-list-alt"></i> Daftar Kamar
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logoutAdmin">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Daftar Kamar -->
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="card">
+            <div class="card-header">
+                <h3>Daftar Kamar</h3>
+            </div>
+            <div class="card-body">
+                <div class="row row-cols-1 row-cols-md-3 g-4" id="roomList">
+                    <% room.forEach((dataKamar, i) => { %>
+                    <div class="col d-flex">
+                        <div class="card w-100">
+                            <div class="card-body text-dark d-flex flex-column" style="background-color: whitesmoke;">
+                                <h5 class="card-title">
+                                    <i class="bi bi-house-door"></i> <%= dataKamar.nama_kamar %>
+                                </h5>
+                                <p class="card-text">
+                                    <i class="bi bi-currency-dollar"></i> Harga: <strong>Rp <%= dataKamar.harga_kamar %></strong>
+                                </p>
+                                <p class="card-text">
+                                    <i class="bi bi-info-circle"></i> <%= dataKamar.deskripsi_kamar %>
+                                </p>
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-sm btn-success editBtn" data-id="<%= dataKamar.id %>">
+                                        <i class="bi bi-pencil"></i> Edit
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-danger deleteBtn" data-id="<%= dataKamar.id %>">
+                                        <i class="bi bi-trash"></i> Hapus
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% }); %>
+                </div>
+                <% if (room.length === 0) { %>
+                <div class="alert alert-warning text-center" role="alert">Belum ada Data Kamar</div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Edit Data -->
+    <div class="modal fade" id="editRoomModal" tabindex="-1" aria-labelledby="editRoomModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editRoomModalLabel"><i class="bi bi-pencil"></i> Edit Data Kamar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editRoomForm">
+                        <div class="mb-3">
+                            <label for="editNamaKamar" class="form-label">Nama Kamar</label>
+                            <input type="text" class="form-control" id="editNamaKamar" name="nama_kamar" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editHargaKamar" class="form-label">Harga Kamar</label>
+                            <input type="number" class="form-control" id="editHargaKamar" name="harga_kamar" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDeskripsiKamar" class="form-label">Deskripsi Kamar</label>
+                            <textarea class="form-control" id="editDeskripsiKamar" name="deskripsi_kamar" rows="3" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="saveEditRoomBtn">Simpan Perubahan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi Hapus -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteLabel"><i class="bi bi-trash"></i> Konfirmasi Hapus</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Apakah Anda yakin ingin menghapus kamar ini?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Hapus Pesanan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <p>&copy; 2025 Abdur Hotels. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let selectedKamarId = null;
+
+            // Event listener tombol edit
+            document.querySelectorAll(".editBtn").forEach((btn) => {
+                btn.addEventListener("click", function () {
+                    selectedKamarId = this.getAttribute("data-id");
+
+                    fetch(`/editKamar/${selectedKamarId}`)
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! Status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then((data) => {
+                            document.getElementById("editNamaKamar").value = data.nama_kamar;
+                            document.getElementById("editHargaKamar").value = data.harga_kamar;
+                            document.getElementById("editDeskripsiKamar").value = data.deskripsi_kamar;
+
+                            // Tampilkan modal edit
+                            const modal = new bootstrap.Modal(document.getElementById("editRoomModal"));
+                            modal.show();
+                        })
+                        .catch((error) => {
+                            console.error("Error fetching room data:", error);
+                            alert("Terjadi kesalahan saat memuat data kamar.");
+                        });
+                });
+            });
+
+            // Simpan perubahan
+            document.getElementById("saveEditRoomBtn").addEventListener("click", function () {
+                const formData = {
+                    nama_kamar: document.getElementById("editNamaKamar").value,
+                    harga_kamar: document.getElementById("editHargaKamar").value,
+                    deskripsi_kamar: document.getElementById("editDeskripsiKamar").value,
+                };
+
+                fetch(`/editKamar/${selectedKamarId}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(formData),
+                })
+                    .then((response) => {
+                        if (response.ok) {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById("editRoomModal"));
+                            modal.hide();
+                            location.reload();
+                        } else {
+                            return response.text().then((text) => {
+                                throw new Error(text);
+                            });
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error updating room:", error);
+                        alert("Terjadi kesalahan saat menyimpan perubahan.");
+                    });
+            });
+
+            // Event listener tombol delete
+            document.querySelectorAll(".deleteBtn").forEach((btn) => {
+                btn.addEventListener("click", function () {
+                    selectedKamarId = this.getAttribute("data-id");
+                    const modal = new bootstrap.Modal(document.getElementById("confirmDeleteModal"));
+                    modal.show();
+                });
+            });
+
+            // Konfirmasi Hapus Kamar
+            document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
+                fetch(`/deleteKamar/${selectedKamarId}`, {
+                    method: "DELETE",
+                })
+                    .then((response) => {
+                        if (response.ok) {
+                            location.reload();
+                        } else {
+                            throw new Error("Error deleting room");
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error deleting room:", error);
+                        alert("Terjadi kesalahan saat menghapus kamar.");
+                    });
+            });
+        });
+    </script>
+</body>
+</html>
